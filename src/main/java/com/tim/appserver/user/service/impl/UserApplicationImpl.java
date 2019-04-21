@@ -9,6 +9,7 @@ import com.tim.appserver.user.pojos.InputUserCreate;
 import com.tim.appserver.user.pojos.OutputUserInfo;
 import com.tim.appserver.user.service.UserApplication;
 import com.tim.appserver.user.service.UserService;
+import com.tim.appserver.utils.RestApi;
 import com.tim.appserver.utils.RestResultCode;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +27,22 @@ public class UserApplicationImpl implements UserApplication {
 
     private UserService userService;
 
+    private RestApi restApi;
+
     @Autowired
-    public UserApplicationImpl(UserService userService) {
+    public UserApplicationImpl(UserService userService, RestApi api) {
         this.userService = userService;
+        this.restApi = api;
     }
 
 
     @Override
     public RestResult login(String username, String password) {
-        RestResultCode result = userService.login(username, password);
-        if (RestResultCode.COMMON_SUCCESS == result) {
-            return RestResult.success();
-        } else {
-            return RestResult.generate(result);
+        RestResult result = userService.login(username, password);
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+            return RestResult.success(restApi.getToken(result.getData().toString()));
         }
+        return result;
     }
 
     @Override

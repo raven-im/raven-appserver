@@ -57,7 +57,7 @@ public class RestResult {
             .setRspMsg(RestResultCode.COMMON_SERVER_ERROR.getMsg());
     }
 
-    public static RestResult generate(Integer rspCode) {
+    public static RestResult failure(Integer rspCode) {
         return new RestResult().setRspCode(rspCode).setRspMsg(RestResultCode.getMsg(rspCode));
     }
 

@@ -1,5 +1,6 @@
 package com.tim.appserver.user.service.impl;
 
+import com.tim.appserver.common.RestResult;
 import com.tim.appserver.shiro.util.RedisCacheSessionDao;
 import com.tim.appserver.user.enums.UserState;
 import com.tim.appserver.user.bean.UserBean;
@@ -46,19 +47,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
-    public RestResultCode login(String username, String password) {
+    public RestResult login(String username, String password) {
+        RestResultCode rspCode = RestResultCode.COMMON_SUCCESS;
         UserBean user = getUserByUsername(username);
 
         if (user == null) {
             logger.info("login fail.");
-            return RestResultCode.USER_USER_NOT_FOUND;
+            rspCode = RestResultCode.USER_USER_NOT_FOUND;
         }
 
         if (!checkUserState(user)) {
             logger.info("login fail.");
-            return RestResultCode.USER_USER_DISABLED;
+            rspCode = RestResultCode.USER_USER_DISABLED;
         }
-        RestResultCode rspCode = RestResultCode.COMMON_SUCCESS;
+
         AuthenticationToken token = new UsernamePasswordToken(username, password);
         try {
             ShiroUtils.getSubject().login(token);
@@ -76,7 +78,10 @@ public class UserServiceImpl implements UserService {
             logger.error("login failure", e);
             rspCode = RestResultCode.COMMON_SERVER_ERROR;
         }
-        return rspCode;
+        if (RestResultCode.COMMON_SUCCESS == rspCode) {
+            return RestResult.success(user.getUid());
+        }
+        return RestResult.failure(rspCode.getCode());
     }
 
     private boolean checkUserState(UserBean user) {

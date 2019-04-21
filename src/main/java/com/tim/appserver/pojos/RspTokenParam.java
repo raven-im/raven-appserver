@@ -6,12 +6,16 @@ import lombok.Data;
 
 /**
  * @author: bbpatience
- * @date: 2018/10/21
- * @description: OutputId
+ * @date: 2019/4/21
+ * @description: RspTokenParam
  **/
-@Data
 @AllArgsConstructor
-public class OutputId {
-    @JsonProperty("id")
+@Data
+public class RspTokenParam {
+    @JsonProperty
+    private String appKey;
+    @JsonProperty
     private String uid;
+    @JsonProperty
+    private String token;
 }

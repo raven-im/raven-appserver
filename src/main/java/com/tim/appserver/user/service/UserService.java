@@ -1,12 +1,13 @@
 package com.tim.appserver.user.service;
 
+import com.tim.appserver.common.RestResult;
 import com.tim.appserver.user.bean.UserBean;
 import com.tim.appserver.user.pojos.InputUserCreate;
 import com.tim.appserver.utils.RestResultCode;
 import java.util.List;
 
 public interface UserService {
-    RestResultCode login(String username, String password);
+    RestResult login(String username, String password);
 
     RestResultCode logout();
 

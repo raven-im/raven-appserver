@@ -72,3 +72,11 @@ mapper:
   not-empty: true
   before: true
   identity: mysql
+
+rest:
+  timeout: 15000
+
+app:
+  url: http://localhost:8060/api/
+  key: u43tOdeHSx8r0XfJRuRDgo
+  secret: aX7-E5ZyTGEkvTWQgJpMog
