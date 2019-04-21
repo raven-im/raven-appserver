@@ -57,11 +57,6 @@ public class UserController {
         return userApplication.logout();
     }
 
-    @GetMapping(path="/exception")
-    public @ResponseBody void exception() throws Exception {
-        throw new IllegalAccessException("IllegalAccessException");
-    }
-
     @PutMapping("/create")
     @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult createUser(@RequestBody InputUserCreate data) {
@@ -89,13 +84,13 @@ public class UserController {
     }
 
     @GetMapping("/{uid}")
-    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult getUser(@PathVariable("uid") String uid) {
         return userApplication.getUser(uid);
     }
 
     @GetMapping("/list")
-    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult getUserList(@RequestParam(value = "type", required = false) Integer type,
         @RequestParam(value = "state", required = false) Integer state) {
         return userApplication.getUserList(type, state);

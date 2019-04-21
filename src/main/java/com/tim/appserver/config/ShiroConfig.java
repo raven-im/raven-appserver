@@ -44,21 +44,21 @@ public class ShiroConfig {
         Map<String, Filter> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("authFilter", new AuthFilter());
         shiroFilterFactoryBean.setFilters(filterChainDefinitionMap);
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap());
+//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap());
         return shiroFilterFactoryBean;
     }
 
-    //TODO ????
-    private static final List<String> servicePaths = Arrays.asList("classes", "setting");
 
-    private static Map<String, String> filterChainDefinitionMap() {
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-
-        for (String serverPath : servicePaths) {
-            filterChainDefinitionMap.put("/api/" + serverPath + "/**", "authFilter");
-        }
-        return filterChainDefinitionMap;
-    }
+//    private static final List<String> servicePaths = Arrays.asList("user", "setting");
+//
+//    private static Map<String, String> filterChainDefinitionMap() {
+//        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+//
+//        for (String serverPath : servicePaths) {
+//            filterChainDefinitionMap.put("/api/" + serverPath + "/**", "authFilter");
+//        }
+//        return filterChainDefinitionMap;
+//    }
 
     @Bean("securityManager")
     public SecurityManager getDefaultWebSecurityManager (
