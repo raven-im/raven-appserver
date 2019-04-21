@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="60">
+    <properties>
+        <property name="LOG_COMPONENT_LEVEL">warn</property>
+        <Property name="LOG_PATTERN">%d [%-6p] %c{1} - %m%n</Property>
+    </properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <RollingRandomAccessFile name="DailyLog" immediateFlush="false"
+          fileName="${sys:LOG_PATH:-../logs}/server.log"
+          filePattern="${sys:LOG_PATH:-../logs}/server.log.%d{yyyy-MM-dd}"
+          bufferSize="1600">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+            </Policies>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.hibernate.validator.internal.util.Version" level="${sys:LOG_COMPONENT_LEVEL}" additivity="false"/>
+        <logger name="org.springframework" level="${sys:LOG_COMPONENT_LEVEL}" additivity="false"/>
+        <logger name="org.apache" level="${sys:LOG_COMPONENT_LEVEL}" additivity="false"/>
+
+        <Root level="info" includeLocation="false">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="DailyLog"/>
+        </Root>
+    </Loggers>
+</Configuration>
