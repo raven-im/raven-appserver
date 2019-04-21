@@ -1,5 +1,6 @@
 package com.tim.appserver.user.service.impl;
 
+import com.tim.appserver.shiro.util.RedisCacheSessionDao;
 import com.tim.appserver.user.enums.UserState;
 import com.tim.appserver.user.bean.UserBean;
 import com.tim.appserver.user.mapper.UserMapper;
@@ -8,8 +9,17 @@ import com.tim.appserver.user.service.UserService;
 import com.tim.appserver.utils.AuthenticationUtils;
 import com.tim.appserver.utils.DateTimeUtils;
 import com.tim.appserver.utils.RestResultCode;
+import com.tim.appserver.utils.ShiroUtils;
 import com.tim.appserver.utils.ShortUuid;
 import java.util.List;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +59,23 @@ public class UserServiceImpl implements UserService {
             return RestResultCode.USER_USER_DISABLED;
         }
         RestResultCode rspCode = RestResultCode.COMMON_SUCCESS;
-
+        AuthenticationToken token = new UsernamePasswordToken(username, password);
+        try {
+            ShiroUtils.getSubject().login(token);
+            ShiroUtils.setAttribute(ShiroUtils.USER_ID, user.getId());
+            ShiroUtils.setAttribute(ShiroUtils.USER_UID, user.getUid());
+        } catch (UnknownAccountException e) {
+            rspCode = RestResultCode.USER_USER_NOT_FOUND;
+        } catch (IncorrectCredentialsException unknown) {
+            rspCode = RestResultCode.USER_NAME_PWD_NOT_MATCH;
+        } catch (LockedAccountException incorrect) {
+            rspCode = RestResultCode.USER_USER_DISABLED;
+        } catch (AuthenticationException e) {
+            rspCode = RestResultCode.USER_NAME_PWD_NOT_MATCH;
+        } catch (Exception e) {
+            logger.error("login failure", e);
+            rspCode = RestResultCode.COMMON_SERVER_ERROR;
+        }
         return rspCode;
     }
 
@@ -70,6 +96,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public RestResultCode logout() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null) {
+            String username = (String) subject.getPrincipal();
+
+            String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+            String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
+            subject.logout();
+
+            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+            String key = RedisCacheSessionDao.SESSION_KEY_PREFIX + uid;
+            setOperations.remove(key, sessionId);
+            logger.info("logout, username={}", username);
+        }
 
         return RestResultCode.COMMON_SUCCESS;
     }
@@ -92,7 +131,6 @@ public class UserServiceImpl implements UserService {
         UserBean userBean = new UserBean();
         userBean.setUsername(data.getUsername());
         userBean.setName(data.getName());
-
 //        userBean.setKeyword();
         userBean.setPassword(password);
         userBean.setPwdsalt(salt);
@@ -118,7 +156,6 @@ public class UserServiceImpl implements UserService {
                 .encryptPassword(data.getPassword(), user.getPwdsalt());
             userBean.setPassword(password);
         }
-
         if (!StringUtils.isEmpty(data.getName())) {
             userBean.setName(data.getName());
 //            userBean.setKeyword();

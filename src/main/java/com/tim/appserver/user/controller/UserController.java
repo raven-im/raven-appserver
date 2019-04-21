@@ -7,6 +7,7 @@ import com.tim.appserver.user.service.UserApplication;
 
 import com.tim.appserver.utils.Constants;
 import com.tim.appserver.utils.RestResultCode;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path="/user")
 public class UserController {
 
-	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-	private UserApplication userApplication;
+    private UserApplication userApplication;
 
     @Autowired
     public UserController(UserApplication userApplication) {
         this.userApplication = userApplication;
     }
 
-	@PostMapping(path="/login")
-	public @ResponseBody RestResult userLogin(@RequestBody InputLogin data) {
+    @PostMapping(path="/login")
+    public @ResponseBody RestResult userLogin(@RequestBody InputLogin data) {
         logger.info("User login called. username:{}", data.getUsername());
 
         if (StringUtils.isEmpty(data.getUsername())) {
@@ -47,8 +48,8 @@ public class UserController {
         if (StringUtils.isEmpty(data.getPassword())) {
             return RestResult.generate(RestResultCode.USER_INVALID_PASSWORD);
         }
-		return userApplication.login(data.getUsername(), data.getPassword());
-	}
+        return userApplication.login(data.getUsername(), data.getPassword());
+    }
 
     @PostMapping(path="/logout")
     public @ResponseBody RestResult userLogout() {
@@ -56,17 +57,25 @@ public class UserController {
         return userApplication.logout();
     }
 
+    @GetMapping(path="/exception")
+    public @ResponseBody void exception() throws Exception {
+        throw new IllegalAccessException("IllegalAccessException");
+    }
+
     @PutMapping("/create")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult createUser(@RequestBody InputUserCreate data) {
         return userApplication.createUser(data);
     }
 
     @PostMapping("/{uid}")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult updateUser(@RequestBody InputUserCreate data, @PathVariable("uid") String uid) {
         return userApplication.updateUser(uid, data);
     }
 
     @PostMapping("/{uid}/state")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult updateUserState(
         @RequestParam(value = "state", defaultValue = "0") Integer state
         , @PathVariable("uid") String uid) {
@@ -74,16 +83,19 @@ public class UserController {
     }
 
     @DeleteMapping("/{uid}")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult deleteUser(@PathVariable("uid") String uid) {
         return userApplication.deleteUser(uid);
     }
 
     @GetMapping("/{uid}")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult getUser(@PathVariable("uid") String uid) {
         return userApplication.getUser(uid);
     }
 
     @GetMapping("/list")
+    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult getUserList(@RequestParam(value = "type", required = false) Integer type,
         @RequestParam(value = "state", required = false) Integer state) {
         return userApplication.getUserList(type, state);

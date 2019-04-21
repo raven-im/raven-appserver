@@ -2,6 +2,8 @@ package com.tim.appserver.common;
 
 import com.tim.appserver.utils.RestResultCode;
 import java.sql.SQLException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 public class ExceptionController {
+
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -31,9 +34,20 @@ public class ExceptionController {
         return RestResult.failure();
     }
 
+    @ExceptionHandler(UnauthenticatedException.class)
+    public @ResponseBody RestResult handleAuthenticatedException(UnauthenticatedException exception) {
+        log.error(exception.getMessage());
+        return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public @ResponseBody RestResult handleAuthorizedException(UnauthorizedException exception) {
+        log.error(exception.getMessage());
+        return RestResult.generate(RestResultCode.USER_USER_NOT_AUTHORIZED);
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public @ResponseBody RestResult handleMethordNotSupportException(HttpRequestMethodNotSupportedException exception) {
+    public @ResponseBody RestResult handleMethodNotSupportException(HttpRequestMethodNotSupportedException exception) {
         log.error(exception.getMessage());
         return RestResult.generate(RestResultCode.COMMON_METHOD_NOT_SUPPORT);
     }

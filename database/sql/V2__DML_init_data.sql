@@ -22,3 +22,15 @@ VALUES (${superadmin.uid},'superadmin',${superadmin.password},CURRENT_TIMESTAMP,
 	'superadmin',${superadmin.salt},0, 0);
 
 UNLOCK TABLES;
+# t_role
+INSERT INTO `t_role` VALUES (1, 'superadmin', '超级管理员', 0, CURRENT_TIMESTAMP , CURRENT_TIMESTAMP);
+INSERT INTO `t_role` VALUES (2, 'user', '普通用户', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+# t_permission
+INSERT INTO `t_permission` VALUES (1, '*', '全部', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+# t_role_permission
+INSERT INTO `t_role_permission` VALUES (1, 1, 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+# t_user_role
+INSERT INTO `t_user_role` VALUES (1, 1, 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
