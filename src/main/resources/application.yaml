@@ -68,7 +68,7 @@ server:
 #通用mapper
 #mappers 多个接口时逗号隔开
 mapper:
-  mappers: com.tim.appserver.common.BaseMapper
+  mappers: com.raven.appserver.common.BaseMapper
   not-empty: true
   before: true
   identity: mysql

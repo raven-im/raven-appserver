@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        projectName = 'com.tim.application'
+        projectName = 'com.raven.application'
         projectVersion = '0.0.1'
     }
     repositories {
