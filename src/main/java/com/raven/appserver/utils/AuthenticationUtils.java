@@ -11,12 +11,4 @@ public class AuthenticationUtils {
         Object result = new SimpleHash(hashAlgorithmName, password, salt, 1);
         return result.toString();
     }
-
-    public static void main(String[] args) {
-        String password = "patience123";
-        String saltStr = "RLmbq9yiYci9EsXdojKs58";
-
-        String result = encryptPassword(password, saltStr);
-        System.out.println("result:" + result);
-    }
 }
