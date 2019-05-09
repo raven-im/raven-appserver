@@ -16,7 +16,7 @@ spring:
           min-idle: 0
 
 druid:
-  url: jdbc:mysql://localhost:3306/timapp_db
+  url: jdbc:mysql://localhost:3306/appdb
   username: root
   password: 123456
   driverClassName: com.mysql.jdbc.Driver
@@ -58,7 +58,7 @@ management:
 #      exposure:
 #        include: ['health']
   server:
-    port: 9081
+    port: 8081
 
 server:
   servlet:
