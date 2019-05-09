@@ -63,7 +63,7 @@ management:
 server:
   servlet:
     context-path: /api
-  port: 9080
+  port: 8080
 
 #通用mapper
 #mappers 多个接口时逗号隔开
@@ -77,6 +77,6 @@ rest:
   timeout: 15000
 
 app:
-  url: http://localhost:8060/route/
+  url: http://localhost:8060/raven-zuul/route/
   key: u43tOdeHSx8r0XfJRuRDgo
   secret: aX7-E5ZyTGEkvTWQgJpMog

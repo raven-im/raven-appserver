@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        projectName = 'com.raven.application'
-        projectVersion = '0.0.1'
+        projectName = 'raven-appserver'
+        projectVersion = '1.0.0'
     }
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
