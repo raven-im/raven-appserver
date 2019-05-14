@@ -6,5 +6,6 @@ A simple application server written by Spring boot. It deals with the users and 
 ### References
 * mobile client:  https://github.com/bbpatience/raven-client
 * im server:  https://github.com/IamNotShady/raven
+* web client: https://github.com/bbpatience/raven-web
 
 
