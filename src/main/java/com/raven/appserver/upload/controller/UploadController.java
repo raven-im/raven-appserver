@@ -7,6 +7,8 @@ import com.raven.appserver.utils.RestResultCode;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +29,7 @@ public class UploadController {
     }
 
     @PostMapping
-    public @ResponseBody RestResult userUpload(@RequestParam("file") MultipartFile file) {
+    public @ResponseBody RestResult uploadFile(@RequestParam("file") MultipartFile file) {
         log.info("user upload");
 
         if (file.isEmpty()) {
@@ -42,4 +44,14 @@ public class UploadController {
         return RestResult.generate(RestResultCode.UPLOAD_FILE_UPLOAD_ERROR);
     }
 
+    @GetMapping(path="/meta")
+    public @ResponseBody RestResult getFileMeta(@RequestParam("group") String group,
+        @RequestParam("path") String path) {
+        log.info("get file meta data.");
+
+        if (StringUtils.isEmpty(group) || StringUtils.isEmpty(path)) {
+            return RestResult.generate(RestResultCode.UPLOAD_FILE_UPLOAD_PARAMETER_ERROR);
+        }
+        return client.getFileMetaData(group, path);
+    }
 }

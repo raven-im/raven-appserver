@@ -1,13 +1,12 @@
 package com.raven.appserver.upload.pojos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.raven.appserver.user.bean.UserBean;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OutputFileInfo {
+public class OutputFileMetaInfo {
 
     @JsonProperty("name")
     private String name;
@@ -15,7 +14,7 @@ public class OutputFileInfo {
     @JsonProperty("size")
     private Long size;
 
-    @JsonProperty("url")
-    private String url;
+    @JsonProperty("extension")
+    private String ext;
 
 }

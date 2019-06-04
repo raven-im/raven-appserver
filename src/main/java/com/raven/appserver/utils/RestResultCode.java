@@ -23,6 +23,7 @@ public enum RestResultCode {
     /* upload */
     UPLOAD_FILE_EMPTY(10201, "File empty."),
     UPLOAD_FILE_UPLOAD_ERROR(10202, "File upload error."),
+    UPLOAD_FILE_UPLOAD_PARAMETER_ERROR(10203, "Parameters error."),
     ;
 
     private int code;
