@@ -66,6 +66,11 @@ public class UserServiceImpl implements UserService {
             ShiroUtils.getSubject().login(token);
             ShiroUtils.setAttribute(ShiroUtils.USER_ID, user.getId());
             ShiroUtils.setAttribute(ShiroUtils.USER_UID, user.getUid());
+
+            String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
+            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+            String key = RedisCacheSessionDao.SESSION_KEY_PREFIX + user.getUid();
+            setOperations.add(key, sessionId);
         } catch (UnknownAccountException e) {
             rspCode = RestResultCode.USER_USER_NOT_FOUND;
         } catch (IncorrectCredentialsException unknown) {
@@ -228,5 +233,19 @@ public class UserServiceImpl implements UserService {
         UserBean userBean = new UserBean();
         userBean.setUid(uid);
         return userMapper.selectOne(userBean);
+    }
+
+    @Override
+    public Boolean isUserLogin() {
+        String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+        String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
+
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        String key = RedisCacheSessionDao.SESSION_KEY_PREFIX + uid;
+        if (StringUtils.isEmpty(uid) || StringUtils.isEmpty(sessionId)) {
+            return false;
+        } else {
+            return setOperations.isMember(key, sessionId);
+        }
     }
 }

@@ -24,4 +24,6 @@ public interface UserService {
     List<UserBean> getUserList(Integer type, Integer state);
 
     UserBean getUserByUsername(String username);
+
+    Boolean isUserLogin();
 }

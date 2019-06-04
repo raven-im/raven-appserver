@@ -7,6 +7,7 @@ import com.raven.appserver.user.pojos.InputUserCreate;
 import com.raven.appserver.user.service.UserApplication;
 
 import com.raven.appserver.utils.RestResultCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Slf4j
 @RequestMapping(path="/user")
 public class UserController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private UserApplication userApplication;
 
@@ -39,7 +39,7 @@ public class UserController {
 
     @PostMapping(path="/login")
     public @ResponseBody RestResult userLogin(@RequestBody InputLogin data) {
-        logger.info("User login called. username:{}", data.getUsername());
+        log.info("User login called. username:{}", data.getUsername());
 
         if (StringUtils.isEmpty(data.getUsername())) {
             return RestResult.generate(RestResultCode.USER_INVALID_USERNAME);
@@ -53,7 +53,7 @@ public class UserController {
 
     @PostMapping(path="/logout")
     public @ResponseBody RestResult userLogout() {
-        logger.info("User logout called.");
+        log.info("User logout called.");
         return userApplication.logout();
     }
 

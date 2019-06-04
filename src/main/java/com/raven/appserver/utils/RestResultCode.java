@@ -19,6 +19,10 @@ public enum RestResultCode {
     USER_USER_NAME_EXIST(10107, "User name exists already."),
     USER_USER_NOT_AUTHORIZED(10108, "User not authorized."),
     USER_USER_NOT_PERMITTED(10109, "User not permitted."),
+
+    /* upload */
+    UPLOAD_FILE_EMPTY(10201, "File empty."),
+    UPLOAD_FILE_UPLOAD_ERROR(10202, "File upload error."),
     ;
 
     private int code;
