@@ -114,9 +114,9 @@ public class UserApplicationImpl implements UserApplication {
         if (state != null && (state > UserState.DELETED.getState() || state < UserState.NORMAL.getState()) ) {
             return RestResult.generate(RestResultCode.COMMON_INVALID_PARAMETER);
         }
-        if (!userService.isUserLogin()) {
-            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
-        }
+//        if (!userService.isUserLogin()) {
+//            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
+//        }
         List<OutputUserInfo> userInfos = new ArrayList<>();
         userService.getUserList(type, state).forEach(user -> {
             OutputUserInfo userInfo = new OutputUserInfo(user);
