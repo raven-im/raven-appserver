@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartException;
 
 /**
  * 全局异常处理 处理控制器抛出的异常 Created by zhouxiaoxiao on 17/4/19.
@@ -51,6 +52,13 @@ public class ExceptionController {
         log.error(exception.getMessage());
         return RestResult.generate(RestResultCode.COMMON_METHOD_NOT_SUPPORT);
     }
+
+    @ExceptionHandler(MultipartException.class)
+    public @ResponseBody RestResult handleMultipartFileException(MultipartException exception) {
+        log.error(exception.getMessage());
+        return RestResult.generate(RestResultCode.UPLOAD_FILE_EMPTY);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public @ResponseBody RestResult handleException(Exception exception) {
