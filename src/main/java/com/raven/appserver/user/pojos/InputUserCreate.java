@@ -23,4 +23,7 @@ public class InputUserCreate {
 
     @JsonProperty("password")
     private String password;
+
+    @JsonProperty("portrait")
+    private String portrait;
 }

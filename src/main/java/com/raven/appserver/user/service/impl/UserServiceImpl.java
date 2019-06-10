@@ -169,7 +169,9 @@ public class UserServiceImpl implements UserService {
         }
         if (!StringUtils.isEmpty(data.getName())) {
             userBean.setName(data.getName());
-//            userBean.setKeyword();
+        }
+        if (!StringUtils.isEmpty(data.getPortrait())) {
+            userBean.setPortrait(data.getPortrait());
         }
         userBean.setUpdate_dt(DateTimeUtils.currentUTC());
 

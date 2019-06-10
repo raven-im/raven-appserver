@@ -1,5 +1,7 @@
 package com.raven.appserver.user.controller;
 
+import com.raven.appserver.upload.FastDFSClientWrapper;
+import com.raven.appserver.upload.pojos.OutputFileInfo;
 import com.raven.appserver.user.pojos.InputLogin;
 import com.raven.appserver.utils.Constants;
 import com.raven.appserver.common.RestResult;
@@ -7,10 +9,9 @@ import com.raven.appserver.user.pojos.InputUserCreate;
 import com.raven.appserver.user.service.UserApplication;
 
 import com.raven.appserver.utils.RestResultCode;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.util.StringUtils;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -32,9 +34,12 @@ public class UserController {
 
     private UserApplication userApplication;
 
+    private FastDFSClientWrapper client;
+
     @Autowired
-    public UserController(UserApplication userApplication) {
+    public UserController(UserApplication userApplication, FastDFSClientWrapper clientWrapper) {
         this.userApplication = userApplication;
+        this.client = clientWrapper;
     }
 
     @PostMapping(path="/login")
@@ -94,5 +99,30 @@ public class UserController {
     public RestResult getUserList(@RequestParam(value = "type", required = false) Integer type,
         @RequestParam(value = "state", required = false) Integer state) {
         return userApplication.getUserList(type, state);
+    }
+
+    @PostMapping("/{uid}/portrait")
+    public @ResponseBody RestResult uploadFile(@RequestParam("file") MultipartFile file,
+        @PathVariable("uid") String uid) {
+        log.info("user update portrait");
+
+        if (file.isEmpty()) {
+            return RestResult.generate(RestResultCode.UPLOAD_FILE_EMPTY);
+        }
+
+        try {
+            RestResult result = client.uploadFile(file);
+            if (result.getRspCode() == RestResultCode.COMMON_SUCCESS.getCode()) {
+                // update the portrait.
+                InputUserCreate data = new InputUserCreate();
+                OutputFileInfo fileInfo = (OutputFileInfo)result.getData();
+                data.setPortrait(fileInfo.getUrl());
+                userApplication.updateUser(uid, data);
+                return result;
+            }
+        } catch (IOException e) {
+            log.error("upload error:", e.getMessage());
+        }
+        return RestResult.generate(RestResultCode.UPLOAD_FILE_UPLOAD_ERROR);
     }
 }
