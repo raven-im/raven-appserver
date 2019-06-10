@@ -118,8 +118,8 @@ public class UserController {
                 OutputFileInfo fileInfo = (OutputFileInfo)result.getData();
                 data.setPortrait(fileInfo.getUrl());
                 userApplication.updateUser(uid, data);
-                return result;
             }
+            return result;
         } catch (IOException e) {
             log.error("upload error:", e.getMessage());
         }
