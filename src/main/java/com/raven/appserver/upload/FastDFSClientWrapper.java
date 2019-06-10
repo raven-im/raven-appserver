@@ -49,9 +49,9 @@ public class FastDFSClientWrapper {
     private String serverUrl;
 
     public RestResult uploadFile(MultipartFile file) throws IOException {
-        if (!userService.isUserLogin()) {
-            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
-        }
+//        if (!userService.isUserLogin()) {
+//            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
+//        }
         Set<MetaData> metaSet = new HashSet<>();
         metaSet.add(new MetaData(META_FILE_NAME, file.getOriginalFilename()));
         metaSet.add(new MetaData(META_FILE_SIZE, String.valueOf(file.getSize())));
@@ -72,9 +72,9 @@ public class FastDFSClientWrapper {
     }
 
     public RestResult getFileMetaData(String group, String path) {
-        if (!userService.isUserLogin()) {
-            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
-        }
+//        if (!userService.isUserLogin()) {
+//            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
+//        }
 
         Set<MetaData> metaSet = storageClient.getMetadata(group, path);
         String name = null, ext = null;
