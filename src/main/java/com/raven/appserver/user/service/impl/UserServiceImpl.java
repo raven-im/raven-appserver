@@ -149,6 +149,7 @@ public class UserServiceImpl implements UserService {
         userBean.setCreate_dt(DateTimeUtils.currentUTC());
         userBean.setUpdate_dt(DateTimeUtils.currentUTC());
         userBean.setUid(uid);
+        userBean.setPortrait("");
 
         userMapper.insert(userBean);
         return uid;

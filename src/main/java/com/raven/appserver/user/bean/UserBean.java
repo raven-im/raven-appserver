@@ -36,7 +36,10 @@ public class UserBean implements Serializable {
     
     @Column
     private String name;
-    
+
+    @Column
+    private String portrait;
+
     @Column
     private Integer state;
 

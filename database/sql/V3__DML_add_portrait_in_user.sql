@@ -1,0 +1,1 @@
+ALTER  TABLE  t_user  ADD COLUMN portrait VARCHAR(1024) COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '头像地址';

@@ -19,10 +19,14 @@ public class OutputUserInfo {
     @JsonProperty("type")
     private Integer type;
 
+    @JsonProperty("portrait")
+    private String portrait;
+
     public OutputUserInfo(UserBean bean) {
         this.name = bean.getName();
         this.state = bean.getState();
         this.type = bean.getType();
         this.uid = bean.getUid();
+        this.portrait = bean.getPortrait();
     }
 }
