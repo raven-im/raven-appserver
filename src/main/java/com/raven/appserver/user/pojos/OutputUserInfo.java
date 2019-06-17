@@ -22,11 +22,15 @@ public class OutputUserInfo {
     @JsonProperty("portrait")
     private String portrait;
 
+    @JsonProperty("mobile")
+    private String mobile;
+
     public OutputUserInfo(UserBean bean) {
         this.name = bean.getName();
         this.state = bean.getState();
         this.type = bean.getType();
         this.uid = bean.getUid();
         this.portrait = bean.getPortrait();
+        this.mobile = bean.getUsername();
     }
 }
