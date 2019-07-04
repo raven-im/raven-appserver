@@ -100,3 +100,8 @@ fdfs:
   res-host: 18.136.206.81
   storage-port: 8888
 
+qiniu:
+  appKey: Dbh-tUiTxAf_-l9LGQKg5GKXXpUqfYKsUGqDAh0F
+  secret: BlSK69IQ31pVkEzyMeOeedxhkUJw2EVqRgUMlVJ7
+  bucket: raven
+

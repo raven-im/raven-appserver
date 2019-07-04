@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/{uid}")
-    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
     public RestResult updateUser(@RequestBody InputUserCreate data, @PathVariable("uid") String uid) {
         return userApplication.updateUser(uid, data);
     }

@@ -5,7 +5,7 @@
 <configuration>
     <!-- 全局别名 -->
     <typeAliases>
-        <package name="com.raven.appserver.bean"/>
+        <package name="com.raven.appserver.*.bean"/>
         <package name="java.lang"/>
         <package name="java.util"/>
         <!-- typeAlias alias="" type="" / -->

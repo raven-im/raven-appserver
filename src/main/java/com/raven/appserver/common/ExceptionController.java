@@ -7,6 +7,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,6 +58,12 @@ public class ExceptionController {
     public @ResponseBody RestResult handleMultipartFileException(MultipartException exception) {
         log.error(exception.getMessage());
         return RestResult.generate(RestResultCode.UPLOAD_FILE_EMPTY);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public @ResponseBody RestResult handleMissingParamsException(MissingServletRequestParameterException exception) {
+        log.error(exception.getMessage());
+        return RestResult.generate(RestResultCode.UPLOAD_FILE_UPLOAD_PARAMETER_ERROR);
     }
 
 
