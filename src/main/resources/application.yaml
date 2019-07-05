@@ -77,8 +77,8 @@ rest:
 
 app:
   url: http://${address.im}:8060/raven-zuul/route/
-  key: u43tOdeHSx8r0XfJRuRDgo
-  secret: aX7-E5ZyTGEkvTWQgJpMog
+  key: ${input-you-key}
+  secret: ${input-you-secret}
 
 address:
   mysql: 127.0.0.1
@@ -92,16 +92,16 @@ fdfs:
     width: 150
     height: 150
   trackerList:            #TrackerList参数,支持多个
-    - 18.136.206.81:22122
+    - ${input-you-tracker-server}:22122
   pool:
       max-total: 150         #从池中借出的对象的最大数目
       max-wait-millis: 100   #获取连接时的最大等待毫秒数100
 
-  res-host: 18.136.206.81
+  res-host: ${input-you-tracker-server}
   storage-port: 8888
 
 qiniu:
-  appKey: Dbh-tUiTxAf_-l9LGQKg5GKXXpUqfYKsUGqDAh0F
-  secret: BlSK69IQ31pVkEzyMeOeedxhkUJw2EVqRgUMlVJ7
-  bucket: raven
+  appKey: ${input-you-key}
+  secret: ${input-you-secret}
+  bucket: ${input-you-bucket}
 
