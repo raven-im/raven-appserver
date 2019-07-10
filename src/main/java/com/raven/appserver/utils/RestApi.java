@@ -40,7 +40,7 @@ public class RestApi {
 
         ReqTokenParam param = new ReqTokenParam(key, userId);
         HttpEntity<ReqTokenParam> entity = new HttpEntity<>(param, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "user/token", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "gateway/token", HttpMethod.POST, entity, RestResult.class);
         RestResult resp = respEntity.getBody();
         Map<String, String> map = (Map) resp.getData();
         return new RspTokenParam(key, userId, map.get("token"));

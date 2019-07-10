@@ -76,7 +76,7 @@ rest:
   timeout: 15000
 
 app:
-  url: http://${address.im}:8060/raven-zuul/route/
+  url: http://${address.im}:8060/raven/admin/
   key: xxxxx
   secret: xxxxx
 
