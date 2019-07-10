@@ -11,8 +11,8 @@
         </Console>
 
         <RollingRandomAccessFile name="DailyLog" immediateFlush="false"
-          fileName="logs/raven-appserver.log"
-          filePattern="logs/raven-appserver.log.%d{yyyy-MM-dd}"
+          fileName="${sys:LOG_PATH:-../logs}/server.log"
+          filePattern="${sys:LOG_PATH:-../logs}/server.log.%d{yyyy-MM-dd}"
           bufferSize="1600">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
