@@ -35,9 +35,9 @@ public class QiniuUploadController {
     public @ResponseBody RestResult getFileMeta(@RequestParam(value = "suffix") String suffix) {
         log.info("get file meta data.");
 
-        String[] imgTypes = {"jpg","jpeg","bmp","gif","png"};
+        String[] supportTypes = {"jpg","jpeg","bmp","gif","png","mp4"};
         boolean isSuffixValid = false;
-        for(String fileSuffix : imgTypes) {
+        for(String fileSuffix : supportTypes) {
             if (suffix.equalsIgnoreCase(fileSuffix)) {
                 isSuffixValid = true;
                 break;
@@ -47,8 +47,8 @@ public class QiniuUploadController {
             return RestResult.generate(RestResultCode.UPLOAD_FILE_UPLOAD_FORMAT_ERROR);
         }
         String token = tokenBean.getToken();
-        String imageUrl = UUID.randomUUID().toString() + "." + suffix;
-        return RestResult.success().setData(new OutputQiniuFileInfo(token, imageUrl));
+        String url = UUID.randomUUID().toString() + "." + suffix;
+        return RestResult.success().setData(new OutputQiniuFileInfo(token, url));
     }
 
 }
