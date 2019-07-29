@@ -3,33 +3,6 @@ spring:
   application:
     name: raven-appserver
 
-# Mybatis
-mybatis:
-#  mapperLocations: classpath:mapper/*Mapper.xml
-  config-location: classpath:mybatis-config.xml
-
-management:
-  endpoints:
-    web:
-      base-path: /actuator
-#      exposure:
-#        include: ['health']
-  server:
-    port: 8081
-
-server:
-  servlet:
-    context-path: /api
-  port: 8080
-
-#通用mapper
-#mappers 多个接口时逗号隔开
-mapper:
-  mappers: com.raven.appserver.common.BaseMapper
-  not-empty: true
-  before: true
-  identity: mysql
-
 nacos:
   config:
     server-addr: 114.67.79.183:8848
