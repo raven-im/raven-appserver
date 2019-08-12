@@ -34,8 +34,8 @@ public class RestApiImpl implements RestApi {
     @Value("${app.secret}")
     private String secret;
 
-//    @Value("${app.url}")
-    private String serverUrl = "http://114.67.79.183:8080/raven/admin"; // TODO
+    @Value("${app.url}")
+    private String serverUrl;
 
     @Autowired
     private RestTemplate client;

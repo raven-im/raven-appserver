@@ -27,7 +27,7 @@ public class GroupController {
     @PostMapping("/create")
     public RestResult create(@RequestBody GroupReqParam param) {
         log.info("group create name:{}", param.getName());
-        return RestResult.success(service.createGroup(param));
+        return service.createGroup(param);
     }
 
     @PostMapping("/join")
@@ -58,6 +58,12 @@ public class GroupController {
             return RestResult.failure(code.getCode());
         }
         return RestResult.success(code);
+    }
+
+    @PostMapping("/detail")
+    public RestResult detailsPost(@RequestBody GroupReqParam param) {
+        log.info("group details:{}", param.getGroupId());
+        return service.groupDetail(param.getGroupId());
     }
 
     @GetMapping("/detail")

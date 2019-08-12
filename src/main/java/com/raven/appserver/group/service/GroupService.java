@@ -8,7 +8,7 @@ import com.raven.appserver.utils.RestResultCode;
 
 public interface GroupService {
 
-    GroupOutParam createGroup(GroupReqParam reqParam);
+    RestResult createGroup(GroupReqParam reqParam);
 
     RestResultCode joinGroup(GroupReqParam reqParam);
 

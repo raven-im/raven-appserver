@@ -13,6 +13,7 @@ import com.raven.appserver.group.service.GroupService;
 import com.raven.appserver.group.validator.GroupValidator;
 import com.raven.appserver.group.validator.MemberInValidator;
 import com.raven.appserver.group.validator.MemberNotInValidator;
+import com.raven.appserver.group.validator.UserValidator;
 import com.raven.appserver.utils.DateTimeUtils;
 import com.raven.appserver.utils.RestApi;
 import com.raven.appserver.utils.RestResultCode;
@@ -46,12 +47,24 @@ public class GroupServiceImpl implements GroupService {
     private MemberInValidator memberInValidator;
 
     @Autowired
+    private UserValidator userValidator;
+
+    @Autowired
     private RestApi restApi;
 
     @Override
-    public GroupOutParam createGroup(GroupReqParam reqParam) {
+    public RestResult createGroup(GroupReqParam reqParam) {
 
-        //TODO  verfiy all the members validation.
+        //params check.
+        if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
+            return RestResult.failure(RestResultCode.COMMON_INVALID_PARAMETER.getCode());
+        }
+
+        for(String uid : reqParam.getMembers()) {
+            if (!userValidator.isValid(uid)) {
+                return RestResult.failure(userValidator.errorCode().getCode());
+            }
+        }
 
         // create group in IM server.
         GroupOutParam result = restApi.createGroup(reqParam);
@@ -78,12 +91,16 @@ public class GroupServiceImpl implements GroupService {
             member.setStatus(0);// 0 normal status;
             memberMapper.insert(member);
         });
-        return result;
+        return RestResult.success(result);
     }
 
     @Override
     public RestResultCode joinGroup(GroupReqParam reqParam) {
         //params check.
+        if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
+            return RestResultCode.COMMON_INVALID_PARAMETER;
+        }
+
         if (!groupValidator.isValid(reqParam.getGroupId())) {
             return groupValidator.errorCode();
         }
@@ -126,6 +143,10 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public RestResultCode quitGroup(GroupReqParam reqParam) {
         //params check.
+        if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
+            return RestResultCode.COMMON_INVALID_PARAMETER;
+        }
+
         if (!groupValidator.isValid(reqParam.getGroupId())) {
             return groupValidator.errorCode();
         }
