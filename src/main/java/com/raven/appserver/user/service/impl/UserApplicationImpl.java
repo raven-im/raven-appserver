@@ -1,6 +1,7 @@
 package com.raven.appserver.user.service.impl;
 
 import com.raven.appserver.utils.RestApi;
+import com.raven.appserver.utils.RestApiImpl;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.pojos.OutputId;
 import com.raven.appserver.user.bean.UserBean;

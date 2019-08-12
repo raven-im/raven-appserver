@@ -25,6 +25,14 @@ public enum RestResultCode {
     UPLOAD_FILE_UPLOAD_ERROR(10202, "File upload error."),
     UPLOAD_FILE_UPLOAD_PARAMETER_ERROR(10203, "Parameters error."),
     UPLOAD_FILE_UPLOAD_FORMAT_ERROR(10204, "File format not support."),
+
+    /*
+      * GROUP PART ERROR.  [12000, 13000)
+      */
+    GROUP_ERROR_COMMON_ERROR(12000, "group module common error."),
+    GROUP_ERROR_INVALID_GROUP_ID(12001, "group id invalid."),
+    GROUP_ERROR_MEMBER_NOT_IN(12002, "member not in group."),
+    GROUP_ERROR_MEMBER_ALREADY_IN(12003, "member already in group."),
     ;
 
     private int code;
@@ -39,6 +47,15 @@ public enum RestResultCode {
         for (RestResultCode r : RestResultCode.values()) {
             if (r.getCode() == code) {
                 return r.getMsg();
+            }
+        }
+        return null;
+    }
+
+    public static RestResultCode newInstance(int code) {
+        for (RestResultCode r : RestResultCode.values()) {
+            if (r.getCode() == code) {
+                return r;
             }
         }
         return null;
