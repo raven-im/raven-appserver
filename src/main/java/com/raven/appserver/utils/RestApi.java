@@ -16,4 +16,8 @@ public interface RestApi {
     RestResult dismissGroup(GroupReqParam reqParam);
 
     RestResult sendMessage(ReqMsgParam reqParam);
+
+    RestResult sendNotify2Conversation(ReqMsgParam reqParam);
+
+    RestResult sendNotify2User(ReqMsgParam reqParam);
 }

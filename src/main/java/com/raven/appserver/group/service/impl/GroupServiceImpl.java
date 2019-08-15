@@ -1,6 +1,7 @@
 package com.raven.appserver.group.service.impl;
 
 
+import static com.raven.appserver.utils.Constants.*;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.group.bean.model.GroupMemberModel;
 import com.raven.appserver.group.bean.model.GroupModel;
@@ -14,9 +15,14 @@ import com.raven.appserver.group.validator.GroupValidator;
 import com.raven.appserver.group.validator.MemberInValidator;
 import com.raven.appserver.group.validator.MemberNotInValidator;
 import com.raven.appserver.group.validator.UserValidator;
+import com.raven.appserver.pojos.ReqMsgParam;
+import com.raven.appserver.user.bean.UserBean;
+import com.raven.appserver.user.service.UserService;
 import com.raven.appserver.utils.DateTimeUtils;
 import com.raven.appserver.utils.RestApi;
 import com.raven.appserver.utils.RestResultCode;
+import com.raven.appserver.utils.ShiroUtils;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +58,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private RestApi restApi;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public RestResult createGroup(GroupReqParam reqParam) {
@@ -97,9 +106,11 @@ public class GroupServiceImpl implements GroupService {
                 member.setStatus(0);// 0 normal status;
                 memberMapper.insert(member);
             });
+
+            // send notify
+            sendNotify(GroupOperationType.CREATE, null, param.getConverId());
             return RestResult.success(param);
         }
-
         return result;
     }
 
@@ -144,6 +155,10 @@ public class GroupServiceImpl implements GroupService {
                     memberMapper.insert(member);
                 }
             });
+
+            // send notify
+            String convId = getConvIdByGroupId(reqParam.getGroupId());
+            sendNotify(GroupOperationType.JOIN, reqParam.getMembers(), convId);
         }
 
         return result;
@@ -178,6 +193,9 @@ public class GroupServiceImpl implements GroupService {
                     .andEqualTo("memberUid", uid);
                 memberMapper.updateByExampleSelective(member, example);
             });
+            // send notify
+            String convId = getConvIdByGroupId(reqParam.getGroupId());
+            sendNotify(GroupOperationType.QUIT, reqParam.getMembers(), convId);
         }
         return result;
     }
@@ -211,6 +229,10 @@ public class GroupServiceImpl implements GroupService {
             member.setUpdateDate(DateTimeUtils.currentUTC());
             member.setStatus(2);// 2 mark delete.
             memberMapper.updateByExampleSelective(member, example1);
+
+            // send notify
+            String convId = getConvIdByGroupId(reqParam.getGroupId());
+            sendNotify(GroupOperationType.DISMISS, null, convId);
         }
         return result;
     }
@@ -239,5 +261,46 @@ public class GroupServiceImpl implements GroupService {
             info.get(0).getPortrait(),
             members,
             info.get(0).getUpdateDate()));
+    }
+
+    private void sendNotify(GroupOperationType type, List<String> members, String covId) {
+        String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+        UserBean bean = userService.getUser(uid);
+        String content = "";
+
+        String memberStr = "";
+        if (members.isEmpty()) {
+            List<String> memberNames = new ArrayList<>();
+            members.forEach(member -> memberNames.add(userService.getUser(member).getName()));
+            for (String name : memberNames) {
+                memberStr += name + " ";
+            }
+        }
+
+        switch (type.getType()) {
+            case 0:
+                content = String.format(CREATE_GROUP_FORMAT, bean.getName());
+                break;
+            case 1:
+                content = String.format(JOIN_GROUP_FORMAT, bean.getName(), memberStr);
+                break;
+            case 2:
+                content = String.format(KICK_GROUP_FORMAT, bean.getName(), memberStr);
+                break;
+            case 3:
+                content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
+                break;
+        }
+        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, content);
+        RestResult result = restApi.sendNotify2Conversation(notifyParam);
+        log.info("Notify result: {}", result);
+    }
+
+    private String getConvIdByGroupId(String groupId) {
+        Example example = new Example(GroupModel.class);
+        example.createCriteria()
+            .andEqualTo("groupId", groupId);
+        List<GroupModel> list = groupMapper.selectByExample(example);
+        return list == null || list.size() <= 0 ? "" : list.get(0).getConverId();
     }
 }

@@ -67,35 +67,49 @@ public class RestApiImpl implements RestApi {
     @Override
     public RestResult createGroup(GroupReqParam reqParam) {
         HttpEntity<GroupReqParam> entity = new HttpEntity<>(reqParam, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "/group/create", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "group/create", HttpMethod.POST, entity, RestResult.class);
         return respEntity.getBody();
     }
 
     @Override
     public RestResult joinGroup(GroupReqParam reqParam) {
         HttpEntity<GroupReqParam> entity = new HttpEntity<>(reqParam, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "/group/join", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "group/join", HttpMethod.POST, entity, RestResult.class);
         return respEntity.getBody();
     }
 
     @Override
     public RestResult quitGroup(GroupReqParam reqParam) {
         HttpEntity<GroupReqParam> entity = new HttpEntity<>(reqParam, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "/group/quit", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "group/quit", HttpMethod.POST, entity, RestResult.class);
         return respEntity.getBody();
     }
 
     @Override
     public RestResult dismissGroup(GroupReqParam reqParam) {
         HttpEntity<GroupReqParam> entity = new HttpEntity<>(reqParam, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "/group/dismiss", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "group/dismiss", HttpMethod.POST, entity, RestResult.class);
         return respEntity.getBody();
     }
 
     @Override
     public RestResult sendMessage(ReqMsgParam reqParam) {
         HttpEntity<ReqMsgParam> entity = new HttpEntity<>(reqParam, authHeaders());
-        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "/msg/send", HttpMethod.POST, entity, RestResult.class);
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "message/conversation", HttpMethod.POST, entity, RestResult.class);
+        return respEntity.getBody();
+    }
+
+    @Override
+    public RestResult sendNotify2Conversation(ReqMsgParam reqParam) {
+        HttpEntity<ReqMsgParam> entity = new HttpEntity<>(reqParam, authHeaders());
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "notification/conversation", HttpMethod.POST, entity, RestResult.class);
+        return respEntity.getBody();
+    }
+
+    @Override
+    public RestResult sendNotify2User(ReqMsgParam reqParam) {
+        HttpEntity<ReqMsgParam> entity = new HttpEntity<>(reqParam, authHeaders());
+        ResponseEntity<RestResult> respEntity = client.exchange(serverUrl + "notification/user", HttpMethod.POST, entity, RestResult.class);
         return respEntity.getBody();
     }
 }

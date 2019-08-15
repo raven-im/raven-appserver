@@ -1,7 +1,5 @@
 package com.raven.appserver.pojos;
 
-import com.raven.appserver.common.MessageType;
-import com.raven.appserver.common.MsgContentType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,7 +13,5 @@ import lombok.Data;
 public class ReqMsgParam {
     private String fromUid;
     private String targetUid;
-    private MessageType msgType;
-    private MsgContentType contentType;
     private String content;
 }

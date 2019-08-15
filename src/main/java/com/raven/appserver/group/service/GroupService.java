@@ -17,4 +17,21 @@ public interface GroupService {
     RestResult dismissGroup(GroupReqParam reqParam);
 
     RestResult groupDetail(String groupId);
+
+    enum GroupOperationType {
+        CREATE(0),
+        JOIN(1),
+        QUIT(2),
+        DISMISS(3);
+
+        private int type;
+
+        GroupOperationType(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return type;
+        }
+    }
 }
