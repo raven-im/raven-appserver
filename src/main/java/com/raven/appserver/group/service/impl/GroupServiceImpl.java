@@ -19,6 +19,7 @@ import com.raven.appserver.utils.RestApi;
 import com.raven.appserver.utils.RestResultCode;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,51 +68,59 @@ public class GroupServiceImpl implements GroupService {
         }
 
         // create group in IM server.
-        GroupOutParam result = restApi.createGroup(reqParam);
+        RestResult result = restApi.createGroup(reqParam);
 
-        //update local group db.
-        GroupModel model = new GroupModel();
-        model.setUid(result.getGroupId());
-        model.setName(reqParam.getName());
-        model.setPortrait(reqParam.getPortrait());
-        model.setOwner(reqParam.getMembers().get(0));
-        model.setCreateDate(result.getTime());
-        model.setUpdateDate(result.getTime());
-        model.setStatus(0); //0 for normal
-        model.setConverId(result.getConverId());
-        groupMapper.insert(model);
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+            Map<String, String> map = (Map) result.getData();
+            GroupOutParam param = new GroupOutParam(map.get("groupId"), map.get("converId"),
+                DateTimeUtils.getDate(map.get("time")));
 
-        //update local group member db.
-        reqParam.getMembers().forEach(uid -> {
-            GroupMemberModel member = new GroupMemberModel();
-            member.setGroupId(result.getGroupId());
-            member.setCreateDate(result.getTime());
-            member.setUpdateDate(result.getTime());
-            member.setMemberUid(uid);
-            member.setStatus(0);// 0 normal status;
-            memberMapper.insert(member);
-        });
-        return RestResult.success(result);
+            //update local group db.
+            GroupModel model = new GroupModel();
+            model.setUid(param.getGroupId());
+            model.setName(reqParam.getName());
+            model.setPortrait(reqParam.getPortrait());
+            model.setOwner(reqParam.getMembers().get(0));
+            model.setCreateDate(param.getTime());
+            model.setUpdateDate(param.getTime());
+            model.setStatus(0); //0 for normal
+            model.setConverId(param.getConverId());
+            groupMapper.insert(model);
+
+            //update local group member db.
+            reqParam.getMembers().forEach(uid -> {
+                GroupMemberModel member = new GroupMemberModel();
+                member.setGroupId(param.getGroupId());
+                member.setCreateDate(param.getTime());
+                member.setUpdateDate(param.getTime());
+                member.setMemberUid(uid);
+                member.setStatus(0);// 0 normal status;
+                memberMapper.insert(member);
+            });
+            return RestResult.success(param);
+        }
+
+        return result;
     }
 
     @Override
-    public RestResultCode joinGroup(GroupReqParam reqParam) {
+    public RestResult joinGroup(GroupReqParam reqParam) {
         //params check.
         if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
-            return RestResultCode.COMMON_INVALID_PARAMETER;
+            return RestResult.generate(RestResultCode.COMMON_INVALID_PARAMETER);
         }
 
         if (!groupValidator.isValid(reqParam.getGroupId())) {
-            return groupValidator.errorCode();
+            return RestResult.generate(groupValidator.errorCode());
         }
         if (!memberInValidator.isValid(reqParam.getGroupId(), reqParam.getMembers())) {
-            return memberInValidator.errorCode();
+            return RestResult.generate(memberInValidator.errorCode());
         }
 
         // call IM server.
-        RestResultCode result = restApi.joinGroup(reqParam);
+        RestResult result = restApi.joinGroup(reqParam);
 
-        if (RestResultCode.COMMON_SUCCESS == result) {
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
             Date now = DateTimeUtils.currentUTC();
             reqParam.getMembers().forEach(uid -> {
                 Example example = new Example(GroupMemberModel.class);
@@ -141,23 +150,23 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public RestResultCode quitGroup(GroupReqParam reqParam) {
+    public RestResult quitGroup(GroupReqParam reqParam) {
         //params check.
         if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
-            return RestResultCode.COMMON_INVALID_PARAMETER;
+            return RestResult.generate(RestResultCode.COMMON_INVALID_PARAMETER);
         }
 
         if (!groupValidator.isValid(reqParam.getGroupId())) {
-            return groupValidator.errorCode();
+            return RestResult.generate(groupValidator.errorCode());
         }
         if (!memberNotValidator.isValid(reqParam.getGroupId(), reqParam.getMembers())) {
-            return memberNotValidator.errorCode();
+            return RestResult.generate(memberNotValidator.errorCode());
         }
 
         // call IM server.
-        RestResultCode result = restApi.quitGroup(reqParam);
+        RestResult result = restApi.quitGroup(reqParam);
 
-        if (RestResultCode.COMMON_SUCCESS == result) {
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
             reqParam.getMembers().forEach(uid -> {
                 GroupMemberModel member = new GroupMemberModel();
                 member.setUpdateDate(DateTimeUtils.currentUTC());
@@ -174,15 +183,15 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public RestResultCode dismissGroup(GroupReqParam reqParam) {
+    public RestResult dismissGroup(GroupReqParam reqParam) {
         //params check.
         if (!groupValidator.isValid(reqParam.getGroupId())) {
-            return groupValidator.errorCode();
+            return RestResult.generate(groupValidator.errorCode());
         }
         // call IM server.
-        RestResultCode result = restApi.dismissGroup(reqParam);
+        RestResult result = restApi.dismissGroup(reqParam);
 
-        if (RestResultCode.COMMON_SUCCESS == result) {
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
             // conversation delete.
             Example example1 = new Example(GroupMemberModel.class);
             example1.createCriteria()

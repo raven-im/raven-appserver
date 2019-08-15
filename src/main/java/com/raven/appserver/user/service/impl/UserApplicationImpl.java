@@ -1,7 +1,7 @@
 package com.raven.appserver.user.service.impl;
 
+import com.raven.appserver.pojos.RspTokenParam;
 import com.raven.appserver.utils.RestApi;
-import com.raven.appserver.utils.RestApiImpl;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.pojos.OutputId;
 import com.raven.appserver.user.bean.UserBean;
@@ -14,7 +14,9 @@ import com.raven.appserver.user.service.UserService;
 import com.raven.appserver.utils.RestResultCode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +27,9 @@ import org.springframework.util.StringUtils;
  **/
 @Service
 public class UserApplicationImpl implements UserApplication {
+
+    @Value("${app.key}")
+    private String key;
 
     private UserService userService;
 
@@ -41,7 +46,9 @@ public class UserApplicationImpl implements UserApplication {
     public RestResult login(String username, String password) {
         RestResult result = userService.login(username, password);
         if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
-            return RestResult.success(restApi.getToken(result.getData().toString()));
+            RestResult imResult = restApi.getToken(result.getData().toString());
+            Map<String, String> map = (Map) imResult.getData();
+            return RestResult.success(new RspTokenParam(key, result.getData().toString(), map.get("token")));
         }
         return result;
     }

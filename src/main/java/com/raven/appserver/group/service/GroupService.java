@@ -10,11 +10,11 @@ public interface GroupService {
 
     RestResult createGroup(GroupReqParam reqParam);
 
-    RestResultCode joinGroup(GroupReqParam reqParam);
+    RestResult joinGroup(GroupReqParam reqParam);
 
-    RestResultCode quitGroup(GroupReqParam reqParam);
+    RestResult quitGroup(GroupReqParam reqParam);
 
-    RestResultCode dismissGroup(GroupReqParam reqParam);
+    RestResult dismissGroup(GroupReqParam reqParam);
 
     RestResult groupDetail(String groupId);
 }
