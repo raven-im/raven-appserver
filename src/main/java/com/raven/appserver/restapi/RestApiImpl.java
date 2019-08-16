@@ -1,10 +1,11 @@
-package com.raven.appserver.utils;
+package com.raven.appserver.restapi;
 
 import com.google.common.hash.Hashing;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.group.bean.param.GroupReqParam;
 import com.raven.appserver.pojos.ReqMsgParam;
 import com.raven.appserver.pojos.ReqTokenParam;
+import com.raven.appserver.utils.ShortUuid.Builder;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class RestApiImpl implements RestApi {
     }
 
     private HttpHeaders authHeaders() {
-        String nonce = new ShortUuid.Builder().build().toString();
+        String nonce = new Builder().build().toString();
         String timestamp = String.valueOf(System.currentTimeMillis() / 1000);
         String toSign = secret + nonce + timestamp;
         String sign = Hashing.sha1()

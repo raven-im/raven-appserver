@@ -19,7 +19,7 @@ import com.raven.appserver.pojos.ReqMsgParam;
 import com.raven.appserver.user.bean.UserBean;
 import com.raven.appserver.user.service.UserService;
 import com.raven.appserver.utils.DateTimeUtils;
-import com.raven.appserver.utils.RestApi;
+import com.raven.appserver.restapi.RestApi;
 import com.raven.appserver.utils.RestResultCode;
 import com.raven.appserver.utils.ShiroUtils;
 import java.util.ArrayList;

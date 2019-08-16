@@ -1,4 +1,4 @@
-package com.raven.appserver.utils;
+package com.raven.appserver.restapi;
 
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.group.bean.param.GroupReqParam;
