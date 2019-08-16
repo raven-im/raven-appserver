@@ -269,7 +269,7 @@ public class GroupServiceImpl implements GroupService {
         String content = "";
 
         String memberStr = "";
-        if (members.isEmpty()) {
+        if (members != null && !members.isEmpty()) {
             List<String> memberNames = new ArrayList<>();
             members.forEach(member -> memberNames.add(userService.getUser(member).getName()));
             for (String name : memberNames) {

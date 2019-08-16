@@ -2,6 +2,7 @@ package com.raven.appserver.pojos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author: bbpatience
@@ -10,6 +11,7 @@ import lombok.Data;
  **/
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ReqMsgParam {
     private String fromUid;
     private String targetUid;
