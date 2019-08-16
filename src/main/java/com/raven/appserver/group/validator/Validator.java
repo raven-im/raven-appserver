@@ -13,6 +13,10 @@ public interface Validator {
         return false;
     }
 
+    default boolean isValid(String key1, String key2) {
+        return false;
+    }
+
     default RestResultCode errorCode() {
         return RestResultCode.COMMON_SERVER_ERROR;
     }

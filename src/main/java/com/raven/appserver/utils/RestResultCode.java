@@ -33,6 +33,7 @@ public enum RestResultCode {
     GROUP_ERROR_INVALID_GROUP_ID(12001, "group id invalid."),
     GROUP_ERROR_MEMBER_NOT_IN(12002, "member not in group."),
     GROUP_ERROR_MEMBER_ALREADY_IN(12003, "member already in group."),
+    GROUP_ERROR_NO_AUTH_OPERATE(12004, "no auth to operate."),
     ;
 
     private int code;

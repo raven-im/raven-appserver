@@ -11,6 +11,7 @@ import com.raven.appserver.group.bean.param.GroupReqParam;
 import com.raven.appserver.group.mapper.GroupMapper;
 import com.raven.appserver.group.mapper.GroupMemberMapper;
 import com.raven.appserver.group.service.GroupService;
+import com.raven.appserver.group.validator.GroupOwnerValidator;
 import com.raven.appserver.group.validator.GroupValidator;
 import com.raven.appserver.group.validator.MemberInValidator;
 import com.raven.appserver.group.validator.MemberNotInValidator;
@@ -55,6 +56,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private UserValidator userValidator;
+
+    @Autowired
+    private GroupOwnerValidator groupOwnerValidator;
 
     @Autowired
     private RestApi restApi;
@@ -206,6 +210,13 @@ public class GroupServiceImpl implements GroupService {
         if (!groupValidator.isValid(reqParam.getGroupId())) {
             return RestResult.generate(groupValidator.errorCode());
         }
+
+        // if not owner dismiss, deny.
+        String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+        if (!groupOwnerValidator.isValid(uid, reqParam.getGroupId())) {
+            return RestResult.generate(groupOwnerValidator.errorCode());
+        }
+
         // call IM server.
         RestResult result = restApi.dismissGroup(reqParam);
 
