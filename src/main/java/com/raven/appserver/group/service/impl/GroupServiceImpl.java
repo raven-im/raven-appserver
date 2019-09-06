@@ -30,8 +30,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 @Service
@@ -65,6 +67,9 @@ public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private UserService userService;
+
+    @Value("${app.superadmin}")
+    private String superAdminUid;
 
     @Override
     public RestResult createGroup(GroupReqParam reqParam) {
@@ -276,6 +281,13 @@ public class GroupServiceImpl implements GroupService {
 
     private void sendNotify(GroupOperationType type, List<String> members, String covId) {
         String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+        /*
+         if uid is null , means no login user.   So the operation is triggered by Server API.
+         So we use Superadmin identity to send the notification.
+         */
+        if (StringUtils.isEmpty(uid)) {
+            uid = superAdminUid;
+        }
         UserBean bean = userService.getUser(uid);
         String content = "";
 
