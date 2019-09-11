@@ -5,6 +5,7 @@ import com.raven.appserver.group.bean.model.GroupModel;
 import com.raven.appserver.group.bean.param.GroupOutParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
 import com.raven.appserver.utils.RestResultCode;
+import java.util.List;
 
 public interface GroupService {
 
@@ -17,6 +18,8 @@ public interface GroupService {
     RestResult dismissGroup(GroupReqParam reqParam);
 
     RestResult groupDetail(String groupId);
+
+    RestResult groupDetails(List<String> groups);
 
     enum GroupOperationType {
         CREATE(0),

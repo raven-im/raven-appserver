@@ -284,6 +284,40 @@ public class GroupServiceImpl implements GroupService {
             info.get(0).getUpdateDate()));
     }
 
+    @Override
+    public RestResult groupDetails(List<String> groups) {
+        List<GroupDetailParam> result = new ArrayList<>();
+        groups.forEach(groupId -> {
+            if (!groupValidator.isValid(groupId)) {
+                return;
+            }
+
+            Example example = new Example(GroupModel.class);
+            example.createCriteria()
+//            .andEqualTo("status", 0)
+                .andEqualTo("uid", groupId);
+            List<GroupModel> info = groupMapper.selectByExample(example);
+            Example example1 = new Example(GroupMemberModel.class);
+            example1.createCriteria()
+                .andEqualTo("status", 0)
+                .andEqualTo("groupId", groupId);
+            List<GroupMemberModel> memberModels = memberMapper.selectByExample(example1);
+            List<String> members = memberModels.stream()
+                .map(x -> x.getMemberUid())
+                .collect(Collectors.toList());
+            result.add(new GroupDetailParam(
+                groupId,
+                info.get(0).getName(),
+                info.get(0).getPortrait(),
+                info.get(0).getConverId(),
+                info.get(0).getOwner(),
+                info.get(0).getStatus(),
+                members,
+                info.get(0).getUpdateDate()));
+        });
+        return RestResult.success(result);
+    }
+
     private void sendNotify(GroupOperationType type, List<String> members, String covId) {
         String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
         /*

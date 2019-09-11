@@ -3,6 +3,7 @@ package com.raven.appserver.group.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.raven.appserver.common.RestResult;
+import com.raven.appserver.group.bean.param.GroupListReqParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
 import com.raven.appserver.group.service.GroupService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,5 +57,11 @@ public class GroupController {
     public RestResult detailsGet(@RequestParam("id") String groupId) {
         log.info("group details:{}", groupId);
         return service.groupDetail(groupId);
+    }
+
+    @PostMapping("/details")
+    public RestResult details(@RequestBody GroupListReqParam param) {
+        log.info("group details:{}", param.getGroups().size());
+        return service.groupDetails(param.getGroups());
     }
 }
