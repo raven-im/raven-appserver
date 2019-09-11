@@ -9,9 +9,17 @@ import lombok.Data;
 @AllArgsConstructor
 public class GroupDetailParam {
 
+    private String groupId;
+
     private String name;
 
     private String portrait;
+
+    private String conversationId;
+
+    private String ownerUid;
+
+    private int status;
 
     private List<String> members;
 

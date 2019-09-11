@@ -262,7 +262,7 @@ public class GroupServiceImpl implements GroupService {
 
         Example example = new Example(GroupModel.class);
         example.createCriteria()
-            .andEqualTo("status", 0)
+//            .andEqualTo("status", 0)
             .andEqualTo("uid", groupId);
         List<GroupModel> info = groupMapper.selectByExample(example);
         Example example1 = new Example(GroupMemberModel.class);
@@ -273,8 +273,13 @@ public class GroupServiceImpl implements GroupService {
         List<String> members = memberModels.stream()
             .map(x -> x.getMemberUid())
             .collect(Collectors.toList());
-        return RestResult.success(new GroupDetailParam(info.get(0).getName(),
+        return RestResult.success(new GroupDetailParam(
+            groupId,
+            info.get(0).getName(),
             info.get(0).getPortrait(),
+            info.get(0).getConverId(),
+            info.get(0).getOwner(),
+            info.get(0).getStatus(),
             members,
             info.get(0).getUpdateDate()));
     }
