@@ -57,7 +57,7 @@ public class AwsUploadServiceImpl implements UploadService {
             if (StringUtils.isEmpty(uid)) {
                 throw new AmazonServiceException("uid invalid");
             }
-            String path = key + SEPARATOR + uid + SEPARATOR + UPLOAD_PATH + SEPARATOR + file.getName();
+            String path = key + SEPARATOR + uid + SEPARATOR + UPLOAD_PATH + SEPARATOR + file.getOriginalFilename();
             log.info("upload file bucket {}  path {}", bucket, path);
             ObjectMetadata metadata = new ObjectMetadata();
 
@@ -66,6 +66,7 @@ public class AwsUploadServiceImpl implements UploadService {
             metadata.addUserMetadata(META_TIME, String.valueOf(System.currentTimeMillis() / 1000));
             metadata.addUserMetadata(META_TYPE, FilenameUtils.getExtension(file.getName()));
             metadata.addUserMetadata(META_FILE_NAME, file.getName());
+            metadata.setContentLength(file.getSize());
 
             PutObjectRequest request = new PutObjectRequest(bucket, path, file.getInputStream(), metadata);
             s3Client.putObject(request);
