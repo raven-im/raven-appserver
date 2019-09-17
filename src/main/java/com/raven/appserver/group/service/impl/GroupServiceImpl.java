@@ -8,6 +8,7 @@ import com.raven.appserver.group.bean.model.GroupModel;
 import com.raven.appserver.group.bean.param.GroupDetailParam;
 import com.raven.appserver.group.bean.param.GroupOutParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
+import com.raven.appserver.group.bean.param.TextMessage;
 import com.raven.appserver.group.mapper.GroupMapper;
 import com.raven.appserver.group.mapper.GroupMemberMapper;
 import com.raven.appserver.group.service.GroupService;
@@ -21,6 +22,7 @@ import com.raven.appserver.user.bean.UserBean;
 import com.raven.appserver.user.service.UserService;
 import com.raven.appserver.utils.DateTimeUtils;
 import com.raven.appserver.restapi.RestApi;
+import com.raven.appserver.utils.JacksonUtils;
 import com.raven.appserver.utils.RestResultCode;
 import com.raven.appserver.utils.ShiroUtils;
 import java.util.ArrayList;
@@ -353,7 +355,7 @@ public class GroupServiceImpl implements GroupService {
                 content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
                 break;
         }
-        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, content);
+        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(new TextMessage(content)));
         RestResult result = restApi.sendNotify2Conversation(notifyParam);
         log.info("Notify result: {}", result);
     }
