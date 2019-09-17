@@ -355,6 +355,7 @@ public class GroupServiceImpl implements GroupService {
                 content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
                 break;
         }
+        log.info("content json: {}", JacksonUtils.toJSon(new TextMessage(content)));
         ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(new TextMessage(content)));
         RestResult result = restApi.sendNotify2Conversation(notifyParam);
         log.info("Notify result: {}", result);
