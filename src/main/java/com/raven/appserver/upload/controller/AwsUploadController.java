@@ -5,6 +5,7 @@ import com.raven.appserver.upload.services.UploadService;
 import com.raven.appserver.utils.RestResultCode;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ public class AwsUploadController {
     }
 
     @PostMapping
+    @RequiresAuthentication
     public @ResponseBody RestResult uploadFile(@RequestParam("file") MultipartFile file) {
         log.info("file upload");
 

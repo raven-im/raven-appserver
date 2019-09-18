@@ -11,6 +11,7 @@ import com.raven.appserver.user.service.UserApplication;
 import com.raven.appserver.utils.RestResultCode;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,6 +58,7 @@ public class UserController {
     }
 
     @PostMapping(path="/logout")
+    @RequiresAuthentication
     public @ResponseBody RestResult userLogout() {
         log.info("User logout called.");
         return userApplication.logout();
@@ -69,7 +71,7 @@ public class UserController {
     }
 
     @PostMapping("/{uid}")
-//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+    @RequiresAuthentication
     public RestResult updateUser(@RequestBody InputUserCreate data, @PathVariable("uid") String uid) {
         return userApplication.updateUser(uid, data);
     }
@@ -89,19 +91,20 @@ public class UserController {
     }
 
     @GetMapping("/{uid}")
-//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+    @RequiresAuthentication
     public RestResult getUser(@PathVariable("uid") String uid) {
         return userApplication.getUser(uid);
     }
 
     @GetMapping("/list")
-//    @RequiresRoles(Constants.USER_SUPER_ADMIN)
+    @RequiresAuthentication
     public RestResult getUserList(@RequestParam(value = "type", required = false) Integer type,
         @RequestParam(value = "state", required = false) Integer state) {
         return userApplication.getUserList(type, state);
     }
 
     @PostMapping("/{uid}/portrait")
+    @RequiresAuthentication
     public @ResponseBody RestResult uploadFile(@RequestParam("file") MultipartFile file,
         @PathVariable("uid") String uid) {
         log.info("user update portrait");

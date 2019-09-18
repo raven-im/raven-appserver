@@ -6,6 +6,7 @@ import com.raven.appserver.upload.pojos.OutputFileInfo;
 import com.raven.appserver.utils.RestResultCode;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class UploadController {
     }
 
     @PostMapping
+    @RequiresAuthentication
     public @ResponseBody RestResult uploadFile(@RequestParam("file") MultipartFile file) {
         log.info("user upload");
 
@@ -45,6 +47,7 @@ public class UploadController {
     }
 
     @GetMapping(path="/meta")
+    @RequiresAuthentication
     public @ResponseBody RestResult getFileMeta(@RequestParam("group") String group,
         @RequestParam("path") String path) {
         log.info("get file meta data.");

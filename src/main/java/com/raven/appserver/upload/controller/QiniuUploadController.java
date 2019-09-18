@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.UUID;
 import javax.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ public class QiniuUploadController {
     }
 
     @GetMapping
+    @RequiresAuthentication
     public @ResponseBody RestResult getFileMeta(@RequestParam(value = "suffix") String suffix) {
         log.info("get file meta data.");
 
