@@ -8,15 +8,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+@Slf4j
 public class AuthFilter extends AccessControlFilter {
-    private static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
 
     @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
@@ -45,7 +44,7 @@ public class AuthFilter extends AccessControlFilter {
         httpResponse.setStatus(HttpServletResponse.SC_OK);
 
         RestResult r = RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
-        logger.info("global resources authentication failed, url={}, result={}",
+        log.info("global resources authentication failed, url={}, result={}",
             WebUtils.getRequestUri(httpRequest),
             JacksonUtils.toJSon(r));
         httpResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);

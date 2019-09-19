@@ -6,6 +6,7 @@ import com.raven.appserver.shiro.util.CustomAtLeastOneSuccessfulStrategy;
 import com.raven.appserver.shiro.util.RedisCacheSessionDao;
 import com.raven.appserver.utils.Constants;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,21 +44,21 @@ public class ShiroConfig {
         Map<String, Filter> filterChainDefinitionMap = new LinkedHashMap<>();
         filterChainDefinitionMap.put("authFilter", new AuthFilter());
         shiroFilterFactoryBean.setFilters(filterChainDefinitionMap);
-//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap());
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap());
         return shiroFilterFactoryBean;
     }
 
 
-//    private static final List<String> servicePaths = Arrays.asList("user", "setting");
-//
-//    private static Map<String, String> filterChainDefinitionMap() {
-//        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-//
-//        for (String serverPath : servicePaths) {
-//            filterChainDefinitionMap.put("/api/" + serverPath + "/**", "authFilter");
-//        }
-//        return filterChainDefinitionMap;
-//    }
+    private static final List<String> servicePaths = Arrays.asList("user", "group");
+
+    private static Map<String, String> filterChainDefinitionMap() {
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+
+        for (String serverPath : servicePaths) {
+            filterChainDefinitionMap.put("/api/" + serverPath + "/**", "authFilter");
+        }
+        return filterChainDefinitionMap;
+    }
 
     @Bean("securityManager")
     public SecurityManager getDefaultWebSecurityManager (

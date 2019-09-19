@@ -5,10 +5,9 @@ import com.raven.appserver.utils.Constants;
 import com.raven.appserver.utils.ShortUuid;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -17,9 +16,8 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @Description
  * @Date Created on 2017/11/11
  */
+@Slf4j
 public class RedisCacheSessionDao extends CachingSessionDAO {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static final String SESSION_KEY_PREFIX = "session_";
 
@@ -32,7 +30,7 @@ public class RedisCacheSessionDao extends CachingSessionDAO {
         if (globalSessionTimeOut == 0) {
             globalSessionTimeOut = 604800000L;
         }
-        logger.info("REDIS GLOBAL SESSION REAL TIMEOUT: {}", globalSessionTimeOut);
+        log.info("REDIS GLOBAL SESSION REAL TIMEOUT: {}", globalSessionTimeOut);
     }
 
     @Override
