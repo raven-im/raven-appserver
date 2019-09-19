@@ -97,7 +97,6 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    @RequiresAuthentication
     public RestResult getUserList(@RequestParam(value = "type", required = false) Integer type,
         @RequestParam(value = "state", required = false) Integer state) {
         return userApplication.getUserList(type, state);
