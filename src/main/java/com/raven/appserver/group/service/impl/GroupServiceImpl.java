@@ -364,7 +364,7 @@ public class GroupServiceImpl implements GroupService {
     private String getConvIdByGroupId(String groupId) {
         Example example = new Example(GroupModel.class);
         example.createCriteria()
-            .andEqualTo("groupId", groupId);
+            .andEqualTo("uid", groupId);
         List<GroupModel> list = groupMapper.selectByExample(example);
         return list == null || list.size() <= 0 ? "" : list.get(0).getConverId();
     }
