@@ -22,5 +22,6 @@ public class Constants {
     public static final String CREATE_GROUP_FORMAT = "%s created the group.";
     public static final String JOIN_GROUP_FORMAT = "%s invited %s to the group.";
     public static final String KICK_GROUP_FORMAT = "%s kicked %s from the group.";
+    public static final String QUIT_GROUP_FORMAT = "%s quited the group.";
     public static final String DISMISS_GROUP_FORMAT = "%s dismissed the group.";
 }

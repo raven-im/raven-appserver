@@ -26,6 +26,7 @@ import com.raven.appserver.utils.JacksonUtils;
 import com.raven.appserver.utils.RestResultCode;
 import com.raven.appserver.utils.ShiroUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -176,7 +177,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public RestResult quitGroup(GroupReqParam reqParam) {
+    public RestResult kickGroup(GroupReqParam reqParam) {
         //params check.
         if (reqParam.getMembers() == null || reqParam.getMembers().size() == 0) {
             return RestResult.generate(RestResultCode.COMMON_INVALID_PARAMETER);
@@ -206,7 +207,43 @@ public class GroupServiceImpl implements GroupService {
             });
             // send notify
             String convId = getConvIdByGroupId(reqParam.getGroupId());
-            sendNotify(GroupOperationType.QUIT, reqParam.getMembers(), convId);
+            sendNotify(GroupOperationType.KICK, reqParam.getMembers(), convId);
+        }
+        return result;
+    }
+
+    @Override
+    public RestResult quitGroup(GroupReqParam reqParam) {
+        //params check.
+        if (!groupValidator.isValid(reqParam.getGroupId())) {
+            return RestResult.generate(groupValidator.errorCode());
+        }
+
+        String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
+
+        if (StringUtils.isEmpty(uid)) {
+            return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
+        }
+        GroupReqParam param = new GroupReqParam();
+        param.setGroupId(reqParam.getGroupId());
+        param.setMembers(Collections.singletonList(uid));
+        // call IM server.
+        RestResult result = restApi.quitGroup(param);
+
+        if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+            GroupMemberModel member = new GroupMemberModel();
+            member.setUpdateDate(DateTimeUtils.currentUTC());
+            member.setStatus(2);// 2 mark delete.
+
+            Example example = new Example(GroupMemberModel.class);
+            example.createCriteria()
+                .andEqualTo("groupId", reqParam.getGroupId())
+                .andEqualTo("memberUid", uid);
+            memberMapper.updateByExampleSelective(member, example);
+
+            // send notify
+            String convId = getConvIdByGroupId(reqParam.getGroupId());
+            sendNotify(GroupOperationType.QUIT, Collections.singletonList(uid), convId);
         }
         return result;
     }
@@ -349,9 +386,12 @@ public class GroupServiceImpl implements GroupService {
                 content = String.format(JOIN_GROUP_FORMAT, bean.getName(), memberStr);
                 break;
             case 2:
-                content = String.format(KICK_GROUP_FORMAT, bean.getName(), memberStr);
+                content = String.format(QUIT_GROUP_FORMAT, bean.getName());
                 break;
             case 3:
+                content = String.format(KICK_GROUP_FORMAT, bean.getName(), memberStr);
+                break;
+            case 4:
                 content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
                 break;
         }

@@ -1,10 +1,7 @@
 package com.raven.appserver.group.service;
 
 import com.raven.appserver.common.RestResult;
-import com.raven.appserver.group.bean.model.GroupModel;
-import com.raven.appserver.group.bean.param.GroupOutParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
-import com.raven.appserver.utils.RestResultCode;
 import java.util.List;
 
 public interface GroupService {
@@ -12,6 +9,8 @@ public interface GroupService {
     RestResult createGroup(GroupReqParam reqParam);
 
     RestResult joinGroup(GroupReqParam reqParam);
+
+    RestResult kickGroup(GroupReqParam reqParam);
 
     RestResult quitGroup(GroupReqParam reqParam);
 
@@ -25,7 +24,8 @@ public interface GroupService {
         CREATE(0),
         JOIN(1),
         QUIT(2),
-        DISMISS(3);
+        KICK(3),
+        DISMISS(4);
 
         private int type;
 

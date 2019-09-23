@@ -38,6 +38,13 @@ public class GroupController {
         return service.joinGroup(param);
     }
 
+    @PostMapping("/kick")
+    @RequiresAuthentication
+    public RestResult kick(@RequestBody GroupReqParam param) {
+        log.info("group kick:{}", param.getGroupId());
+        return service.kickGroup(param);
+    }
+
     @PostMapping("/quit")
     @RequiresAuthentication
     public RestResult quit(@RequestBody GroupReqParam param) {
