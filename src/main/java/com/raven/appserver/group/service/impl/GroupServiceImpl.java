@@ -224,6 +224,10 @@ public class GroupServiceImpl implements GroupService {
         if (StringUtils.isEmpty(uid)) {
             return RestResult.generate(RestResultCode.USER_USER_NOT_LOGIN);
         }
+        if (!memberNotValidator.isValid(reqParam.getGroupId(), Collections.singletonList(uid))) {
+            return RestResult.generate(memberNotValidator.errorCode());
+        }
+
         GroupReqParam param = new GroupReqParam();
         param.setGroupId(reqParam.getGroupId());
         param.setMembers(Collections.singletonList(uid));
