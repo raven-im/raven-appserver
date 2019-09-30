@@ -21,11 +21,12 @@ public interface GroupService {
     RestResult groupDetails(List<String> groups);
 
     enum GroupOperationType {
-        CREATE(0),
-        JOIN(1),
-        QUIT(2),
-        KICK(3),
-        DISMISS(4);
+        NORMAL(0),
+        CREATE(1),
+        JOIN(2),
+        QUIT(3),
+        KICK(4),
+        DISMISS(5);
 
         private int type;
 

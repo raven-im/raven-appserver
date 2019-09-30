@@ -5,10 +5,10 @@ import static com.raven.appserver.utils.Constants.*;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.group.bean.model.GroupMemberModel;
 import com.raven.appserver.group.bean.model.GroupModel;
+import com.raven.appserver.group.bean.param.GroupChangeMessage;
 import com.raven.appserver.group.bean.param.GroupDetailParam;
 import com.raven.appserver.group.bean.param.GroupOutParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
-import com.raven.appserver.group.bean.param.TextMessage;
 import com.raven.appserver.group.mapper.GroupMapper;
 import com.raven.appserver.group.mapper.GroupMemberMapper;
 import com.raven.appserver.group.service.GroupService;
@@ -382,25 +382,30 @@ public class GroupServiceImpl implements GroupService {
             }
         }
 
-        switch (type.getType()) {
-            case 0:
+        switch (type) {
+            case CREATE:
                 content = String.format(CREATE_GROUP_FORMAT, bean.getName());
                 break;
-            case 1:
+            case JOIN:
                 content = String.format(JOIN_GROUP_FORMAT, bean.getName(), memberStr);
                 break;
-            case 2:
+            case QUIT:
                 content = String.format(QUIT_GROUP_FORMAT, bean.getName());
                 break;
-            case 3:
+            case KICK:
                 content = String.format(KICK_GROUP_FORMAT, bean.getName(), memberStr);
                 break;
-            case 4:
+            case DISMISS:
                 content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
                 break;
         }
-        log.info("content json: {}", JacksonUtils.toJSon(new TextMessage(content)));
-        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(new TextMessage(content)));
+        GroupChangeMessage changeMsg = GroupChangeMessage.builder()
+            .notification(content)
+            .type(type.getType())
+            .members(members)
+            .build();
+        log.info("content json: {}", JacksonUtils.toJSon(changeMsg));
+        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(changeMsg));
         RestResult result = restApi.sendNotify2Conversation(notifyParam);
         log.info("Notify result: {}", result);
     }
