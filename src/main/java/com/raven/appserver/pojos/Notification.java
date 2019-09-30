@@ -1,4 +1,4 @@
-package com.raven.appserver.group.bean.param;
+package com.raven.appserver.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -9,12 +9,12 @@ import lombok.Data;
 /**
  * @author: bbpatience
  * @date: 2019/9/30
- * @description: GroupChangeMessage
+ * @description: Notification
  **/
 @Data
 @Builder
 @JsonInclude(Include.NON_NULL)
-public class GroupChangeMessage {
+public class Notification {
 //    NORMAL(0),
 //    CREATE(1),
 //    JOIN(2),

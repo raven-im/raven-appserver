@@ -5,7 +5,7 @@ import static com.raven.appserver.utils.Constants.*;
 import com.raven.appserver.common.RestResult;
 import com.raven.appserver.group.bean.model.GroupMemberModel;
 import com.raven.appserver.group.bean.model.GroupModel;
-import com.raven.appserver.group.bean.param.GroupChangeMessage;
+import com.raven.appserver.pojos.Notification;
 import com.raven.appserver.group.bean.param.GroupDetailParam;
 import com.raven.appserver.group.bean.param.GroupOutParam;
 import com.raven.appserver.group.bean.param.GroupReqParam;
@@ -399,13 +399,13 @@ public class GroupServiceImpl implements GroupService {
                 content = String.format(DISMISS_GROUP_FORMAT, bean.getName());
                 break;
         }
-        GroupChangeMessage changeMsg = GroupChangeMessage.builder()
+        Notification notification = Notification.builder()
             .notification(content)
             .type(type.getType())
             .members(members)
             .build();
-        log.info("content json: {}", JacksonUtils.toJSon(changeMsg));
-        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(changeMsg));
+        log.info("content json: {}", JacksonUtils.toJSon(notification));
+        ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(notification));
         RestResult result = restApi.sendNotify2Conversation(notifyParam);
         log.info("Notify result: {}", result);
     }
