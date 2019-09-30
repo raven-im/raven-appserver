@@ -190,24 +190,26 @@ public class GroupServiceImpl implements GroupService {
             return RestResult.generate(memberNotValidator.errorCode());
         }
 
+        // send notification first, then the kicked client will receive that notify (CMD) to do sth.
+        String convId = getConvIdByGroupId(reqParam.getGroupId());
+        RestResult result = sendNotify(GroupOperationType.KICK, reqParam.getMembers(), convId);
         // call IM server.
-        RestResult result = restApi.quitGroup(reqParam);
-
         if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
-            reqParam.getMembers().forEach(uid -> {
-                GroupMemberModel member = new GroupMemberModel();
-                member.setUpdateDate(DateTimeUtils.currentUTC());
-                member.setStatus(2);// 2 mark delete.
+            result = restApi.quitGroup(reqParam);
 
-                Example example = new Example(GroupMemberModel.class);
-                example.createCriteria()
-                    .andEqualTo("groupId", reqParam.getGroupId())
-                    .andEqualTo("memberUid", uid);
-                memberMapper.updateByExampleSelective(member, example);
-            });
-            // send notify
-            String convId = getConvIdByGroupId(reqParam.getGroupId());
-            sendNotify(GroupOperationType.KICK, reqParam.getMembers(), convId);
+            if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+                reqParam.getMembers().forEach(uid -> {
+                    GroupMemberModel member = new GroupMemberModel();
+                    member.setUpdateDate(DateTimeUtils.currentUTC());
+                    member.setStatus(2);// 2 mark delete.
+
+                    Example example = new Example(GroupMemberModel.class);
+                    example.createCriteria()
+                        .andEqualTo("groupId", reqParam.getGroupId())
+                        .andEqualTo("memberUid", uid);
+                    memberMapper.updateByExampleSelective(member, example);
+                });
+            }
         }
         return result;
     }
@@ -231,23 +233,26 @@ public class GroupServiceImpl implements GroupService {
         GroupReqParam param = new GroupReqParam();
         param.setGroupId(reqParam.getGroupId());
         param.setMembers(Collections.singletonList(uid));
+
+        // send notify
+        String convId = getConvIdByGroupId(reqParam.getGroupId());
+        RestResult result = sendNotify(GroupOperationType.QUIT, Collections.singletonList(uid), convId);
+
         // call IM server.
-        RestResult result = restApi.quitGroup(param);
-
         if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
-            GroupMemberModel member = new GroupMemberModel();
-            member.setUpdateDate(DateTimeUtils.currentUTC());
-            member.setStatus(2);// 2 mark delete.
+            result = restApi.quitGroup(param);
 
-            Example example = new Example(GroupMemberModel.class);
-            example.createCriteria()
-                .andEqualTo("groupId", reqParam.getGroupId())
-                .andEqualTo("memberUid", uid);
-            memberMapper.updateByExampleSelective(member, example);
+            if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+                GroupMemberModel member = new GroupMemberModel();
+                member.setUpdateDate(DateTimeUtils.currentUTC());
+                member.setStatus(2);// 2 mark delete.
 
-            // send notify
-            String convId = getConvIdByGroupId(reqParam.getGroupId());
-            sendNotify(GroupOperationType.QUIT, Collections.singletonList(uid), convId);
+                Example example = new Example(GroupMemberModel.class);
+                example.createCriteria()
+                    .andEqualTo("groupId", reqParam.getGroupId())
+                    .andEqualTo("memberUid", uid);
+                memberMapper.updateByExampleSelective(member, example);
+            }
         }
         return result;
     }
@@ -265,33 +270,35 @@ public class GroupServiceImpl implements GroupService {
             return RestResult.generate(groupOwnerValidator.errorCode());
         }
 
+        // send notify
+        String convId = getConvIdByGroupId(reqParam.getGroupId());
+        RestResult result = sendNotify(GroupOperationType.DISMISS, null, convId);
+
         // call IM server.
-        RestResult result = restApi.dismissGroup(reqParam);
-
         if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
-            // conversation delete.
-            Example example1 = new Example(GroupMemberModel.class);
-            example1.createCriteria()
-                .andEqualTo("groupId", reqParam.getGroupId());
+            result = restApi.dismissGroup(reqParam);
 
-            // clean group info
-            GroupModel model = new GroupModel();
-            model.setStatus(2); //2 for mark delete
-            model.setUpdateDate(DateTimeUtils.currentUTC());
-            Example example = new Example(GroupModel.class);
-            example.createCriteria()
-                .andEqualTo("uid", reqParam.getGroupId());
-            groupMapper.updateByExampleSelective(model, example);
+            if (RestResultCode.COMMON_SUCCESS.getCode() == result.getRspCode()) {
+                // conversation delete.
+                Example example1 = new Example(GroupMemberModel.class);
+                example1.createCriteria()
+                    .andEqualTo("groupId", reqParam.getGroupId());
 
-            //clean group member info
-            GroupMemberModel member = new GroupMemberModel();
-            member.setUpdateDate(DateTimeUtils.currentUTC());
-            member.setStatus(2);// 2 mark delete.
-            memberMapper.updateByExampleSelective(member, example1);
+                // clean group info
+                GroupModel model = new GroupModel();
+                model.setStatus(2); //2 for mark delete
+                model.setUpdateDate(DateTimeUtils.currentUTC());
+                Example example = new Example(GroupModel.class);
+                example.createCriteria()
+                    .andEqualTo("uid", reqParam.getGroupId());
+                groupMapper.updateByExampleSelective(model, example);
 
-            // send notify
-            String convId = getConvIdByGroupId(reqParam.getGroupId());
-            sendNotify(GroupOperationType.DISMISS, null, convId);
+                //clean group member info
+                GroupMemberModel member = new GroupMemberModel();
+                member.setUpdateDate(DateTimeUtils.currentUTC());
+                member.setStatus(2);// 2 mark delete.
+                memberMapper.updateByExampleSelective(member, example1);
+            }
         }
         return result;
     }
@@ -361,7 +368,7 @@ public class GroupServiceImpl implements GroupService {
         return RestResult.success(result);
     }
 
-    private void sendNotify(GroupOperationType type, List<String> members, String covId) {
+    private RestResult sendNotify(GroupOperationType type, List<String> members, String covId) {
         String uid = (String) ShiroUtils.getAttribute(ShiroUtils.USER_UID);
         /*
          if uid is null , means no login user.   So the operation is triggered by Server API.
@@ -404,10 +411,9 @@ public class GroupServiceImpl implements GroupService {
             .type(type.getType())
             .members(members)
             .build();
-        log.info("content json: {}", JacksonUtils.toJSon(notification));
+//        log.info("content json: {}", JacksonUtils.toJSon(notification));
         ReqMsgParam notifyParam = new ReqMsgParam(uid, covId, JacksonUtils.toJSon(notification));
-        RestResult result = restApi.sendNotify2Conversation(notifyParam);
-        log.info("Notify result: {}", result);
+        return restApi.sendNotify2Conversation(notifyParam);
     }
 
     private String getConvIdByGroupId(String groupId) {
