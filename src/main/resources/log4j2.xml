@@ -10,7 +10,7 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <RollingRandomAccessFile name="DailyLog" immediateFlush="false"
+        <RollingRandomAccessFile name="DailyLog" immediateFlush="true"
           fileName="logs/raven-appserver.log"
           filePattern="logs/raven-appserver.log.%d{yyyy-MM-dd}"
           bufferSize="1600">

@@ -29,12 +29,12 @@ public class ExceptionController {
             .setRspMsg(baseException.getMessage());
     }
 
-    @ExceptionHandler(SQLException.class)
-    public @ResponseBody RestResult handleSQLException(SQLException sqlException) {
-        log.error(sqlException.getMessage());
-        sqlException.printStackTrace();
-        return RestResult.failure();
-    }
+//    @ExceptionHandler(SQLException.class)
+//    public @ResponseBody RestResult handleSQLException(SQLException sqlException) {
+//        log.error(sqlException.getMessage());
+//        sqlException.printStackTrace();
+//        return RestResult.failure();
+//    }
 
     @ExceptionHandler(UnauthenticatedException.class)
     public @ResponseBody RestResult handleAuthenticatedException(UnauthenticatedException exception) {
@@ -67,10 +67,10 @@ public class ExceptionController {
     }
 
 
-    @ExceptionHandler(Exception.class)
-    public @ResponseBody RestResult handleException(Exception exception) {
-        log.error(exception.getMessage());
-        exception.printStackTrace();
-        return RestResult.failure();
-    }
+//    @ExceptionHandler(Exception.class)
+//    public @ResponseBody RestResult handleException(Exception exception) {
+//        log.error(exception.getMessage());
+//        exception.printStackTrace();
+//        return RestResult.failure();
+//    }
 }
